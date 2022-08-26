@@ -1,0 +1,38 @@
+// the filter passes the variable $template - the path to the template file. By changing this path, we are changing the template file.
+add_filter('template_include', 'my_template');
+
+// filtering feature
+function my_template( $template ) {
+
+	# analogue of the second method
+	//if it is portfolio page, use page-portfolio.php template file
+	// use conditional tag is_page()
+	if( is_page('portfolio') ){
+		if ( $new_template = locate_template( array( 'page-portfolio.php' ) ) )
+			return $new_template ;
+	}
+
+	# rubric group template
+	// this example will use the file from theme folder tpl_special-cats.php, 
+	// as template for categories with ID 9, name "Uncategorized" and slug "php"
+	if( is_category( array( 9, 'Uncategorized', 'php') ) ){
+		return get_stylesheet_directory() . '/tpl_special-cats.php';
+	}
+
+	# template for writing by ID
+	// template file is located in plugin folder /my-plugin/site-template.php
+	global $post;
+	if( $post->ID == 12 ){
+		return wp_normalize_path( WP_PLUGIN_DIR ) . '/my-plugin/site-template.php';
+	}
+
+	# template for custom type "book" pages
+	// it is assumed that the template file book-tpl.php is in the theme folder
+	global $post;
+	if( $post->post_type == 'book' ){
+		return get_stylesheet_directory() . '/book-tpl.php';
+	}
+
+	return $template;
+
+}
